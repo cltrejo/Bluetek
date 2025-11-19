@@ -1,16 +1,13 @@
-/* Fondo cuadriculado general */
+/* Fondo moderno con degradado suave */
 .content {
-    background-color: #DEDCD6;
-    background-image: 
-        linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px);
-    background-size: 20px 20px;
+    background: linear-gradient(135deg, #e8edf2, #f9fbfc);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    font-family: "Inter", sans-serif;
 }
 
-/* Contenedor principal */
+/* Contenedor general */
 .main-container {
     display: flex;
     flex-direction: column;
@@ -18,225 +15,160 @@
     position: relative;
 }
 
-/* Selector arriba a la izquierda */
+/* Selector arriba izquierda */
 .selector-top-left {
     position: absolute;
-    top: 20px;
-    left: 20px;
-    z-index: 10;
+    top: 25px;
+    left: 25px;
+    z-index: 20;
 }
 
-/* Selector de habitaciones */
 .habitacion-selector {
-    background-color: white;
-    padding: 15px 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(10px);
+    padding: 15px 25px;
+    border-radius: 14px;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.1);
     display: flex;
     align-items: center;
-    gap: 12px;
-    min-width: 350px;
+    gap: 15px;
 }
 
 .habitacion-selector label {
     font-weight: 600;
-    color: #333;
-    font-size: 14px;
-    white-space: nowrap;
+    color: #1c1c1c;
+    font-size: 15px;
 }
 
 .habitacion-selector select {
-    width: 200px;
-    padding: 8px 12px;
-    border-radius: 8px;
-    border: 2px solid #e1e1e1;
+    width: 210px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid #d8d8d8;
     outline: none;
-    font-size: 14px;
-    background-color: #f8f9fa;
-    transition: all 0.3s ease;
+    font-size: 15px;
+    background-color: #ffffffc4;
+    transition: all 0.25s;
     cursor: pointer;
+}
+
+.habitacion-selector select:hover {
+    border-color: #9dbef6;
 }
 
 .habitacion-selector select:focus {
     border-color: #4A90E2;
+    box-shadow: 0 0 8px rgba(74,144,226,0.35);
     background-color: white;
-    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
 }
 
-.habitacion-selector select:hover {
-    border-color: #c1c1c1;
-}
-
-/* Contenedor principal centrado - 95% del viewport */
+/* Contenido principal centrado */
 .main-content {
+    margin: auto;
+    width: 90%;
+    max-width: 1200px;
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 95vw;
-    height: 95vh;
-    margin: 0 auto;
-    padding: 20px;
-    box-sizing: border-box;
 }
 
-/* Asegurar que el contenedor principal permita SVG grande */
+/* Tarjeta moderna */
 .habitacion-container {
     width: 100%;
-    height: 100%;
-    max-width: none;
-    background-color: #fff;
-    border-radius: 16px;
-    padding: 40px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    max-width: 900px;
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(12px);
+    padding: 50px;
+    border-radius: 22px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.12);
     text-align: center;
-    border: 1px solid #f0f0f0;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    overflow: visible; /* Cambiado de auto a visible */
 }
 
+/* Títulos */
 .habitacion-container h2 {
-    margin-bottom: 20px;
-    font-size: 32px;
+    font-size: 36px;
     font-weight: 700;
+    margin-bottom: 12px;
     color: #2c3e50;
 }
 
 .habitacion-container p {
-    margin-bottom: 30px;
-    color: #555;
     font-size: 20px;
-    font-weight: 500;
+    margin-bottom: 25px;
+    color: #4a4a4a;
 }
 
-/* Mensaje cuando no hay habitación seleccionada */
-.no-habitacion {
-    width: 100%;
-    height: 100%;
-    background-color: #fff;
-    border-radius: 16px;
-    padding: 40px;
-    text-align: center;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-    color: #666;
-    font-size: 22px;
-    font-weight: 500;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 2px dashed #e1e1e1;
+/* SVG centrado dentro de tarjeta */
+.svg-container {
+    margin: 25px auto;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 3px 18px rgba(0,0,0,0.12);
+    max-width: 600px;
 }
 
+/* Botón elegante */
 .detalle-btn {
-    background: linear-gradient(135deg, #4a90e2, #081FF6);
+    background: linear-gradient(135deg, #4A90E2, #0951d6);
     color: white;
+    padding: 16px 35px;
     font-size: 18px;
-    font-weight: 600;
-    padding: 15px 30px;
     border: none;
-    border-radius: 8px;
+    border-radius: 12px;
     cursor: pointer;
-    margin-top: 30px;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    font-weight: 600;
+    transition: all 0.25s ease;
 }
 
 .detalle-btn:hover {
-    background: linear-gradient(135deg, #5aa0f2, #468cd0);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.25);
 }
 
 .detalle-btn:active {
-    transform: translateY(0);
-    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    transform: translateY(0px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
+/* Contenedor sin zona */
+.no-habitacion {
+    padding: 50px;
+    background: rgba(255,255,255,0.85);
+    border-radius: 18px;
+    border: 2px dashed #d3d3d3;
+    text-align: center;
+    font-size: 22px;
+    color: #666;
+    width: 100%;
+}
+
+/* Alerta de temperatura */
 .alerta-temp {
     color: #d62828;
-    font-weight: bold;
-    margin: 15px 0;
-    padding: 10px 15px;
-    border-radius: 8px;
-    background: #ffe6e6;
-    border: 1px solid #d62828;
-    display: inline-block;
-    animation: pulse 1.5s infinite;
+    background: #ffdada;
+    padding: 12px 20px;
+    border-radius: 10px;
     font-size: 18px;
+    display: inline-block;
+    margin-bottom: 20px;
 }
 
-@keyframes pulse {
-    0% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.05); opacity: 0.8; }
-    100% { transform: scale(1); opacity: 1; }
-}
-
-/* Responsivo */
+/* Responsive */
 @media (max-width: 768px) {
     .selector-top-left {
         position: relative;
-        top: auto;
-        left: auto;
-        margin: 15px;
+        margin-bottom: 20px;
         display: flex;
         justify-content: center;
     }
 
-    .habitacion-selector {
-        flex-direction: column;
-        min-width: auto;
-        width: 100%;
-        max-width: 300px;
-    }
-
-    .habitacion-selector select {
-        width: 100%;
-    }
-
-    .main-content {
-        width: 100vw;
-        height: auto;
-        min-height: 80vh;
-        padding: 15px;
-    }
-
     .habitacion-container {
-        padding: 25px;
-        height: auto;
-        min-height: 400px;
-    }
-
-    .habitacion-container h2 {
-        font-size: 24px;
-    }
-
-    .habitacion-container p {
-        font-size: 16px;
-    }
-
-    .no-habitacion {
-        font-size: 18px;
         padding: 30px;
     }
-}
 
-@media (max-width: 480px) {
-    .selector-top-left {
-        margin: 10px;
-    }
-
-    .habitacion-selector {
-        min-width: 280px;
-        padding: 12px 15px;
-    }
-
-    .main-content {
-        padding: 10px;
-    }
-
-    .habitacion-container {
-        padding: 20px;
+    .svg-container {
+        padding: 15px;
     }
 }
+
