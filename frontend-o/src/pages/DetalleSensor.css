@@ -48,3 +48,105 @@
   font-weight: bold;
   color: #007bff;
 }
+
+/* Estilos para predicciones */
+.predicciones-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.btn-predicciones {
+  background: linear-gradient(135deg, #ff7f0e, #ff9d4d);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-predicciones:hover:not(:disabled) {
+  background: linear-gradient(135deg, #e67300, #ff8c1a);
+  transform: translateY(-2px);
+}
+
+.btn-predicciones:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.predicciones-info {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #ff7f0e;
+}
+
+.predicciones-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.prediccion-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+}
+
+.pred-time {
+  font-weight: 600;
+  color: #495057;
+}
+
+.pred-temp {
+  color: #ff7f0e;
+  font-weight: bold;
+}
+
+.pred-rh {
+  color: #6c757d;
+  font-size: 0.9em;
+}
+
+/* Tooltip personalizado */
+.custom-tooltip {
+  background: white;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.tooltip-label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.tooltip-value {
+  font-weight: 600;
+  margin: 2px 0;
+}
+
+.tooltip-detail {
+  font-size: 0.85em;
+  color: #666;
+  margin: 2px 0;
+}
+
+/* Ajustes para el grid de stats */
+.stats-grid {
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}

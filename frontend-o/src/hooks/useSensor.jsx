@@ -16,7 +16,7 @@ export function useSensor() {
 
         const intervaloSimulacion = setInterval(() => {
             simularCambiosTemperatura();
-        }, 30000);
+        }, 300000);
 
         return () => clearInterval(intervaloSimulacion);
     }, []);

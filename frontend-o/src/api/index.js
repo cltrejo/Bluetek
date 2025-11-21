@@ -19,6 +19,10 @@ const endpoints = {
     simulacion: {
         temperatura: (data) => api.post("/api/simular_temperatura/", data),
     },
+
+    predicciones: {
+        predecirTemperatura: (data) => api.post("/modelo/predecir_temperatura/", data),
+    },
 };
 
 export default endpoints;

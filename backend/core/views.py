@@ -11,8 +11,153 @@ from django.contrib.auth import get_user_model
 from .serializers import ZonaSerializer, MedicionSerializer, ThermostatoSerializer, UserSerializer, LoginSerializer
 from rest_framework.permissions import IsAuthenticated
 from .models import ZONA, MEDICION_THERMOSTATO, THERMOSTATO, SENSOR, MEDICION_SENSOR, MATERIAL_ZONA
+import pandas as pd
+import joblib
+import os
+from django.conf import settings
+from django.http import JsonResponse
+import numpy as np
 
 User = get_user_model()
+
+
+try:
+    model_path = 'C:/Users/PC/Desktop/Capstone/backend/modelo/modelo_temp.pkl'
+    model = joblib.load(model_path)    
+    MODEL_LOADED = True
+    print("✅ Modelo cargado exitosamente")
+except Exception as e:
+    model = None
+    MODEL_LOADED = False
+    print(f"❌ Error cargando modelo: {e}")
+
+import numpy as np
+import pandas as pd
+from django.http import JsonResponse
+
+
+@api_view(['POST'])
+@permission_classes((IsAuthenticated,))
+def predecir_temperatura(request):
+    """
+    Endpoint para hacer predicciones con el modelo para las próximas 3 horas
+    en intervalos de 30 minutos
+    """
+    if not MODEL_LOADED:
+        return JsonResponse({
+            'error': 'Modelo no disponible'
+        }, status=500)
+    
+    try:
+        # Obtener datos del request
+        data = request.data
+        timestamp = data.get('timestamp')
+        zoneName = data.get('zoneName', 'Juegos')
+        
+        if not timestamp:
+            return JsonResponse({
+                'error': 'Se requiere el campo timestamp'
+            }, status=400)
+        
+        # Convertir timestamp base a datetime
+        timestamp_base = pd.to_datetime(timestamp)
+        
+        # Crear lista de timestamps para las próximas 3 horas (cada 30 minutos)
+        timestamps_futuros = []
+        for minutos in [20, 40, 60, 80]:  # 0.5h, 1h, 1.5h, 2h, 2.5h, 3h
+            timestamps_futuros.append(timestamp_base + pd.Timedelta(minutes=minutos))
+        
+        # Crear DataFrame con todos los timestamps futuros
+        df_futuro = pd.DataFrame({'timestamp': timestamps_futuros})
+        
+        # Extraer características temporales para cada timestamp futuro
+        df_futuro['año'] = df_futuro['timestamp'].dt.year
+        df_futuro['mes'] = df_futuro['timestamp'].dt.month
+        df_futuro['dia'] = df_futuro['timestamp'].dt.day
+        df_futuro['hora'] = df_futuro['timestamp'].dt.hour
+        df_futuro['minuto'] = df_futuro['timestamp'].dt.minute
+        df_futuro['dia_semana'] = df_futuro['timestamp'].dt.dayofweek  # 0=Lunes, 6=Domingo
+        
+        # Mapeo de RH por hora (basado en tus datos)
+        rh_por_hora = {
+            0: 25, 1: 21, 2: 21, 3: 21, 4: 21, 5: 21,
+            6: 21, 7: 22, 8: 23, 9: 25, 10: 26, 11: 28,
+            12: 30, 13: 30, 14: 32, 15: 34, 16: 37, 17: 40,
+            18: 42, 19: 42, 20: 42, 21: 37, 22: 33, 23: 30
+        }
+        
+        # Agregar zoneName y rh (usando la hora para el mapeo)
+        df_futuro['zoneName'] = zoneName
+        df_futuro['rh'] = df_futuro['hora'].map(rh_por_hora)
+        
+        # Verificar que no hay valores nulos en rh
+        if df_futuro['rh'].isna().any():
+            print("Advertencia: Algunas horas no tienen mapeo de RH")
+            # Usar valor promedio como fallback
+            promedio_rh = sum(rh_por_hora.values()) / len(rh_por_hora)
+            df_futuro['rh'] = df_futuro['rh'].fillna(promedio_rh)
+        
+        # Transformar ciclos
+        df_futuro["hora_sin"] = np.sin(2 * np.pi * df_futuro["hora"] / 24)
+        df_futuro["hora_cos"] = np.cos(2 * np.pi * df_futuro["hora"] / 24)
+        
+        df_futuro["minuto_sin"] = np.sin(2 * np.pi * df_futuro["minuto"] / 60)
+        df_futuro["minuto_cos"] = np.cos(2 * np.pi * df_futuro["minuto"] / 60)
+        
+        df_futuro["dia_sem_sin"] = np.sin(2 * np.pi * df_futuro["dia_semana"] / 7)
+        df_futuro["dia_sem_cos"] = np.cos(2 * np.pi * df_futuro["dia_semana"] / 7)
+        
+        df_futuro["mes_sin"] = np.sin(2 * np.pi * df_futuro["mes"] / 12)
+        df_futuro["mes_cos"] = np.cos(2 * np.pi * df_futuro["mes"] / 12)
+        
+        # Eliminar columnas originales
+        df_futuro = df_futuro.drop(columns=['timestamp', 'hora', 'minuto', 'dia_semana', 'mes'])
+        
+        # Convertir zoneName a categoría
+        df_futuro['zoneName'] = df_futuro['zoneName'].astype('category')
+        
+        # Verificar estructura final
+        print("Estructura del DataFrame para predicciones futuras:")
+        print(df_futuro.info())
+        print(f"\nSe harán {len(df_futuro)} predicciones")
+        
+        
+        # Hacer predicciones para todos los timestamps futuros
+        predicciones = model.predict(df_futuro)
+        
+        # Crear respuesta con las predicciones organizadas por tiempo
+        respuesta = {
+            'timestamp_base': timestamp,
+            'zoneName': zoneName,
+            'predicciones': []
+        }
+        
+        # Intervalos de tiempo en minutos
+        intervalos = [20, 40, 60, 80]
+        
+        for i, (minutos, prediccion, rh_val) in enumerate(zip(intervalos, predicciones, df_futuro['rh'])):
+            # Calcular timestamp futuro
+            timestamp_futuro = (timestamp_base + pd.Timedelta(minutes=minutos)).strftime('%Y-%m-%dT%H:%M:%S')
+            
+            respuesta['predicciones'].append({
+                'minutos_desde_base': minutos,
+                'timestamp_prediccion': timestamp_futuro,
+                'temperatura_predicha': float(prediccion),
+                'rh_utilizado': float(rh_val),
+                'intervalo': f"{minutos//60}h {minutos%60}min" if minutos >= 60 else f"{minutos}min"
+            })
+        
+        respuesta['status'] = 'success'
+        
+        return JsonResponse(respuesta)
+        
+    except Exception as e:
+        return JsonResponse({
+            'error': f'Error en la predicción: {str(e)}'
+        }, status=400)
+
+
+
 
 @api_view(['POST'])
 #ENDPOINT PREVIAMENTE CON AUTENTICACION REQUERIDA @permission_classes((IsAuthenticated,))
